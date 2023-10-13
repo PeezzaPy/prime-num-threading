@@ -21,9 +21,9 @@ def find_prime_in_range(thread_num, start, end, output_prime_numbers):
     for num in range(start, end):
         if is_prime_num(num):
             prime_numbers.append(num)
-            # To see the progress of multiprocessing
+            # using delay to see the progress of multiprocessing
             print(f"Thread # {thread_num+1} : {num}")
-            time.sleep(1)
+            #time.sleep(1)
 
     output_prime_numbers.extend(prime_numbers)
             
