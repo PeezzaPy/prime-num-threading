@@ -16,15 +16,15 @@ def is_prime_num(my_num):
     return True
 
 
-def find_prime_in_range(thread_num, start, end, output_prime_numbers):
+def find_prime_in_range(start, end, output_prime_numbers):
     prime_numbers = []
 
     for num in range(start, end):
         if is_prime_num(num):
             prime_numbers.append(num)
             # using delay to see the progress of multiprocessing
-            print(f"\nThread # {thread_num + 1} : {num}")
-            # time.sleep(1)
+            print(f"\nThread # {thread_num+1} : {num}")
+            #time.sleep(1)
 
     output_prime_numbers.extend(prime_numbers)
 
@@ -34,25 +34,40 @@ def find_prime_in_range(thread_num, start, end, output_prime_numbers):
 
 
 def main():
-    threads = []
+    threads, thread_start, thread_end = [], [], []
     output_prime_numbers = []
-    num_of_threads = 4
-    start_num = 1
-    end_num = 1000
+
+    # Get input from the user
+    print("=-=-= PRIME NUMBER CALCULATOR USING MULTI-THREADING =-=-=", end="\n\n")
+    start_num = get_integer_input("Enter the start number: ")
+    end_num = get_integer_input("Enter the end number: ")
+    num_of_threads = get_integer_input("Enter number of threads: ")
+
+    # calculate the size per thread
     chunk_size_per_thread = (end_num - start_num) // num_of_threads
 
+    # MULTI-THREADING
     for i in range(num_of_threads):
-        thread_start = start_num + i * chunk_size_per_thread
-        thread_end = thread_start + chunk_size_per_thread
-        thread = threading.Thread(target=find_prime_in_range, args=(i, thread_start, thread_end, output_prime_numbers))
+        start = start_num + i * chunk_size_per_thread
+        end = start + chunk_size_per_thread
+        thread_start.append(start)
+        thread_end.append(end)
+
+    start_time = time.time()     
+    for i in range(num_of_threads):
+        thread = threading.Thread(target=find_prime_in_range, args=(thread_start[i], thread_end[i], output_prime_numbers))
         threads.append(thread)
         thread.start()
+    end_time = time.time() 
+    execution_time = end_time - start_time
 
     # main thread waits for all the sub-thread
     for thread in threads:
         thread.join()
 
+
     print("\n\nArray of prime numbers:\n", sorted(output_prime_numbers))
+
 
 
 if __name__ == "__main__":
